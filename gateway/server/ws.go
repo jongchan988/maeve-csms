@@ -206,42 +206,6 @@ func (s *WebsocketHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	span.SetAttributes(attribute.Int("ocpp.security_profile", int(cs.SecurityProfile)))
 
-	switch cs.SecurityProfile {
-	case registry.UnsecuredTransportWithBasicAuth:
-		if r.TLS != nil || !checkAuthorization(r.Context(), r, cs) {
-			if r.TLS != nil {
-				span.SetAttributes(attribute.String("auth.failure_reason", "tls for unsecured transport"))
-			}
-			span.SetStatus(codes.Error, "unauthorized")
-			span.SetAttributes(semconv.HTTPStatusCode(http.StatusUnauthorized))
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			return
-		}
-	case registry.TLSWithBasicAuth:
-		if r.TLS == nil || !checkAuthorization(r.Context(), r, cs) {
-			if r.TLS == nil {
-				span.SetAttributes(attribute.String("auth.failure_reason", "no tls for secured transport"))
-			}
-			span.SetStatus(codes.Error, "unauthorized")
-			span.SetAttributes(semconv.HTTPStatusCode(http.StatusUnauthorized))
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			return
-		}
-	case registry.TLSWithClientSideCertificates:
-		if r.TLS == nil || !checkCertificate(r.Context(), r, s.orgNames, cs) {
-			if r.TLS == nil {
-				span.SetAttributes(attribute.String("auth.failure_reason", "no tls for secured transport"))
-			}
-			span.SetStatus(codes.Error, "unauthorized")
-			span.SetAttributes(semconv.HTTPStatusCode(http.StatusUnauthorized))
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-			return
-		}
-	default:
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-
 	wsConn, err := websocket.Accept(w, r, &websocket.AcceptOptions{Subprotocols: []string{"ocpp2.0.1", "ocpp1.6"}, InsecureSkipVerify: true})
 	if err != nil {
 		span.SetAttributes(attribute.String("websocket.accept_failure_reason", err.Error()))

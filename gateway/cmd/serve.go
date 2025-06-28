@@ -148,6 +148,8 @@ var serveCmd = &cobra.Command{
 			server.WithOtelTracer(tracer))
 		wsServer := server.New("ws", wsAddr, nil, websocketHandler)
 		var wssServer *server.Server
+		// wss 임시주석
+		wssAddr := ""
 
 		if wssAddr != "" {
 			if tlsServerCert == "" {

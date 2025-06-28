@@ -63,7 +63,8 @@ func SyncTriggers(ctx context.Context,
 							return
 						}
 						if details == nil {
-							span.RecordError(fmt.Errorf("no runtime details for charge station"))
+							span.RecordError(fmt.Errorf("no runtime details for charge station!!"))
+							span.RecordError(fmt.Errorf(pendingTriggerMessage.ChargeStationId))
 							return
 						}
 

@@ -247,16 +247,23 @@ func (s *Store) SetChargeStationRuntimeDetails(ctx context.Context, chargeStatio
 func (s *Store) LookupChargeStationRuntimeDetails(ctx context.Context, chargeStationId string) (*store.ChargeStationRuntimeDetails, error) {
 	csRef := s.client.Doc(fmt.Sprintf("ChargeStationRuntimeDetails/%s", chargeStationId))
 	snap, err := csRef.Get(ctx)
+	fmt.Println("debug1")
+
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
+		    fmt.Println("debug2")
+		    fmt.Println(err)
 			return nil, nil
 		}
+        fmt.Println("debug3")
 		return nil, fmt.Errorf("lookup charge station runtime details %s: %w", chargeStationId, err)
 	}
 	var csData chargeStationRuntimeDetails
 	if err = snap.DataTo(&csData); err != nil {
+	    fmt.Println("debug4")
 		return nil, fmt.Errorf("map charge station runtime details %s: %w", chargeStationId, err)
 	}
+    fmt.Println("debug5")
 	return &store.ChargeStationRuntimeDetails{
 		OcppVersion: csData.OcppVersion,
 	}, nil

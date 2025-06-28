@@ -52,8 +52,8 @@ services:
       - "--manager-api-addr"
       - "http://manager:9410"
     ports:
-      - "80:9310" # charge station ws
-      - "443:9311" # charge station wss
+      - "9310:9310" # charge station ws
+      - "9311:9311" # charge station wss
       - "9312:9312" # status
     volumes:
       - type: bind
@@ -75,7 +75,7 @@ services:
         condition: service_healthy
     environment:
       ENVIRONMENT: dev
-      FIRESTORE_EMULATOR_HOST: firestore:8080
+      FIRESTORE_EMULATOR_HOST: firestore:7080
     command:
       - "serve"
       - "-c"
@@ -106,6 +106,6 @@ services:
       - emulators
       - firestore
       - start
-      - --host-port=0.0.0.0:8080
+      - --host-port=0.0.0.0:7080
     ports:
-      - "8080:8080"
+      - "7080:7080"

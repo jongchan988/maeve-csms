@@ -1,36 +1,30 @@
 # syntax=docker/dockerfile:1.2
 
-# STAGE 1: build the executable
-FROM golang:1.20-alpine AS builder
+FROM golang:1.22.2
 
-RUN apk add --no-cache git openssh ca-certificates
+RUN apt-get update && apt-get install -y git openssh-client ca-certificates curl
 
 ARG TARGETARCH
 
-# IF statement executed due to incosistent package names @ https://github.com/moparisthebest/static-curl/issues/8
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
         TARGETARCH=aarch64 ; \
         fi; \
     wget -O /usr/bin/curl https://github.com/moparisthebest/static-curl/releases/download/v8.0.1/curl-$TARGETARCH \
         && chmod +x /usr/bin/curl
 
-WORKDIR /src
+WORKDIR /go/src/myapp
 
 COPY ./go.mod ./go.sum ./
-
 RUN go mod download
 
 COPY ./ ./
 
-RUN --mount=type=cache,target=/root/.cache/go-build/ CGO_ENABLED=0 go build -o /app main.go
+COPY ./start_server.sh ./stop_server.sh ./
 
-# STAGE 2: build the container
-FROM gcr.io/distroless/static:nonroot AS final
 
-COPY --from=builder /usr/bin/curl /usr/bin/curl
+RUN go build -cover -covermode=atomic -coverpkg=./... -o ./app main.go
 
-USER 10000:10000
+RUN mkdir -p "/app/cover"
+ENV GOCOVERDIR=/app/cover
 
-COPY --from=builder --chown=nonroot:nonroot /app /app
-
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["sh", "./start_server.sh"]

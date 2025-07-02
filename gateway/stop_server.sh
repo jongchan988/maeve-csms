@@ -1,14 +1,18 @@
 #!/bin/sh
-kill -SIGINT $(pidof app)
-PID=$(ps aux | grep "app serve")
+
+# 정확히 PID만 추출
+PID=$(ps aux | grep "[a]pp serve" | awk '{print $2}')
 
 if [ -z "$PID" ]; then
-  echo "❌ app serv is not running."
+  echo "❌ app serve is not running."
   exit 1
 fi
 
-echo "🛑 Sending SIGINT to app serv (PID=$PID)..."
-kill -15 "$PID"
+echo "🛑 Sending SIGTERM to app serve (PID=$PID)..."
+kill -TERM "$PID"
 
+# flush 유도
 sleep 1
-go tool covdata textfmt -i=/app/cover -o coverage.out
+
+# 커버리지 출력
+go tool covdata textfmt -i=/cover -o coverage.out

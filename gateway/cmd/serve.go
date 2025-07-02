@@ -209,13 +209,13 @@ var serveCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(serveCmd)
 
-	serveCmd.Flags().StringVarP(&mqttAddr, "mqtt-addr", "m", "mqtt://127.0.0.1:1883",
+	serveCmd.Flags().StringVarP(&mqttAddr, "mqtt-addr", "m", "mqtt://host.docker.internal:1883",
 		"The address of the MQTT broker, e.g. mqtt://127.0.0.1:1883")
-	serveCmd.Flags().StringVarP(&wsAddr, "ws-addr", "a", "127.0.0.1:9310",
+	serveCmd.Flags().StringVarP(&wsAddr, "ws-addr", "a", "0.0.0.0:9310",
 		"The address that the insecure websocket server will listen on for connections, e.g. 127.0.0.1:9310")
 	serveCmd.Flags().StringVarP(&wssAddr, "wss-addr", "w", "",
 		"The address that the secure websocket server will listen on for connections, e.g. 127.0.0.1:9311")
-	serveCmd.Flags().StringVarP(&statusAddr, "status-addr", "s", "127.0.0.1:9312",
+	serveCmd.Flags().StringVarP(&statusAddr, "status-addr", "s", "0.0.0.0:9312",
 		"The address that the status server will listen on for connections, e.g. 127.0.0.1:9312")
 	serveCmd.Flags().StringVarP(&tlsServerCert, "tls-server-cert", "c", "",
 		"A file that contains a PEM encoded certificate to use as the TLS server cert")
@@ -225,7 +225,7 @@ func init() {
 		"A file that contains a PEM encoded certificate to add to the TLS trust store")
 	serveCmd.Flags().StringSliceVarP(&orgNames, "org-name", "o", []string{"Thoughtworks"},
 		"A comma-separated list of organisation names that are valid in client certificates")
-	serveCmd.Flags().StringVarP(&managerApiAddr, "manager-api-addr", "r", "http://127.0.0.1:9410",
+	serveCmd.Flags().StringVarP(&managerApiAddr, "manager-api-addr", "r", "http://host.docker.internal:9410",
 		"The address of the CSMS manager API, e.g. http://127.0.0.1:9410")
 	serveCmd.Flags().BoolVar(&trustProxyHeaders, "trust-proxy", false,
 		"Trust proxy headers when determining the client's TLS status")

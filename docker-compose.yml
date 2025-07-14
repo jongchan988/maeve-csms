@@ -52,7 +52,7 @@ services:
       - "--manager-api-addr"
       - "http://manager:9410"
     ports:
-      - "9310:9310" # charge station ws
+      - "9515:9310" # charge station ws
       - "9311:9311" # charge station wss
       - "9312:9312" # status
     volumes:

@@ -98,14 +98,8 @@ services:
       timeout: 10s
       retries: 3
     user: "${UID}:${GID}"
-
   firestore:
-    image: google/cloud-sdk
-    command:
-      - gcloud
-      - emulators
-      - firestore
-      - start
-      - --host-port=0.0.0.0:7080
+    build:
+      context: firestore
     ports:
       - "7080:7080"
